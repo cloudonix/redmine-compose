@@ -23,7 +23,7 @@ services:
       VIRTUAL_HOST: redmine
     volumes:
       - plugins:/usr/src/redmine/plugins
-      - files:/usr/src/redmine/files
+      - /efs/redmine/files:/usr/src/redmine/files
       - ./wait-for-plugins.sh:/wait-for-plugins:ro
       - ./configuration.yml:/usr/src/redmine/config/configuration.yml
       - /var/log/redmine/:/usr/src/redmine/log/
@@ -41,14 +41,14 @@ services:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: redmine
     volumes:
-      - data-volume:/var/lib/mysql
+      - /efs/redmine/database:/var/lib/mysql
     restart: always
 
   tool:
     build: .
     volumes:
       - plugins:/redmine/plugins
-      - files:/redmine/files
+      - /efs/redmine/files:/redmine/files
       - ./install-plugins.sh:/install-plugins:ro
     command: /install-plugins
 
