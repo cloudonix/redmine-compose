@@ -12,6 +12,7 @@ function install_from_github() {
 	)
 }
 
+rm -f /redmine/files/plugins-are-ready
 cd /redmine/plugins
 
 install_from_github skokhanovskiy/redmine_omniauth_google yes
