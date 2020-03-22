@@ -30,3 +30,4 @@ install_from_github haru/redmine_code_review
 install_from_github speedy32129/time_logger
 
 touch /redmine/files/plugins-are-ready
+sleep 10 # wait for a bit before finishing - if we hit a restart loop, dont hammer github
