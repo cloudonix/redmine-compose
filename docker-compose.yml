@@ -51,6 +51,7 @@ services:
       - /efs/redmine/files:/redmine/files
       - ./install-plugins.sh:/install-plugins:ro
     command: /install-plugins
+    restart: on-failure
 
 volumes:
   data-volume:
