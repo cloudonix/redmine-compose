@@ -5,7 +5,8 @@ function install_from_github() {
 	read username reponame <<<"${repo/\// }"
 	[ -d "$reponame" ] && rm -rf $reponame
 	(
-		curl -L https://api.github.com/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$reponame,"
+		set -eo pipefail
+		curl -sfL -D/dev/stderr https://api.github.com/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$reponame,"
 		cd "$reponame"
 		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
 		exit 0
