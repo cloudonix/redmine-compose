@@ -34,7 +34,7 @@ services:
     depends_on:
       - database
     restart: always
-    mem_limit: 800m
+    mem_limit: 1g
 
   database:
     image: mariadb
