@@ -50,6 +50,7 @@ services:
     volumes:
       - plugins:/redmine/plugins
       - /efs/redmine/files:/redmine/files
+      - /etc/redmine:/etc/redmine-compose
       - ./install-plugins.sh:/install-plugins:ro
     command: /install-plugins
     restart: on-failure
