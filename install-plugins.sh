@@ -1,14 +1,15 @@
 #!/bin/bash -ex
 
 function install_from_github() {
-	local repo="$1" bundler="$2"
+	local repo="$1" bundler="$2" targetdir="$3"
 	read username reponame <<<"${repo/\// }"
-	[ -d "$reponame" ] && rm -rf $reponame
+	targetdir="${targetdir:-$reponame}"
+	[ -d "$targetdir" ] && rm -rf $targetdir
 	(
 		set -eo pipefail
-		curl -sfL -D/dev/stderr https://api.github.com/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$reponame,"
-		cd "$reponame"
-		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
+		curl -sfL -D/dev/stderr https://api.github.com/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
+		cd "$targetdir"
+		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle install --without development test
 		exit 0
 	)
 }
@@ -30,7 +31,7 @@ install_from_github haru/redmine_code_review
 
 install_from_github speedy32129/time_logger
 
-install_from_github martin-denizet/redmine_custom_css
+install_from_github onozaty/redmine-view-customize yes view_customize
 
 [ -f /etc/redmine-compose/plugins ] && . /etc/redmine-compose/plugins
 [ -d /etc/redmine-compose/plugins.d ] && for file in /etc/redmine-compose/plugins.d/*; do . "$file"; done
