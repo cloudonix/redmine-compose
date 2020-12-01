@@ -30,6 +30,8 @@ install_from_github haru/redmine_code_review
 
 install_from_github speedy32129/time_logger
 
+install_from_github martin-denizet/redmine_custom_css
+
 [ -f /etc/redmine-compose/plugins ] && . /etc/redmine-compose/plugins
 [ -d /etc/redmine-compose/plugins.d ] && for file in /etc/redmine-compose/plugins.d/*; do . "$file"; done
 
