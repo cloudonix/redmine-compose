@@ -9,7 +9,7 @@ function install_from_github() {
 		set -eo pipefail
 		curl -sfL -D/dev/stderr https://api.github.com/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
 		cd "$targetdir"
-		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle install --without development test
+		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
 		exit 0
 	)
 }
@@ -31,7 +31,13 @@ install_from_github haru/redmine_code_review
 
 install_from_github speedy32129/time_logger
 
-install_from_github onozaty/redmine-view-customize yes view_customize
+(
+  curl -sfL https://api.github.com/repos/onozaty/redmine-view-customize/tarball | tar -zx --xform="s,onozaty-redmine-view-customize-[[:alnum:]]*,view_customize,"
+  cd view_customize
+  bundle config set without 'development test'
+  (echo "source 'https://rubygems.org'"; cat Gemfile) > Gemfile.new; mv Gemfile.new Gemfile
+  bundle install
+)
 
 [ -f /etc/redmine-compose/plugins ] && . /etc/redmine-compose/plugins
 [ -d /etc/redmine-compose/plugins.d ] && for file in /etc/redmine-compose/plugins.d/*; do . "$file"; done
