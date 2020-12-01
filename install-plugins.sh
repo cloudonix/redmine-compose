@@ -1,13 +1,18 @@
 #!/bin/bash -ex
 
+[ -f /etc/redmine-compose/configuration ] && . /etc/redmine-compose/configuration
+
 function install_from_github() {
-	local repo="$1" bundler="$2" targetdir="$3"
+	local repo="$1" bundler="$2" targetdir="$3" githubauth
 	read username reponame <<<"${repo/\// }"
 	targetdir="${targetdir:-$reponame}"
+	if [ -n "$USERNAME" ]; then
+		githubauth="${USERNAME}:${PASSWORD}@"
+	fi
 	[ -d "$targetdir" ] && rm -rf $targetdir
 	(
 		set -eo pipefail
-		curl -sfL -D/dev/stderr https://api.github.com/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
+		curl -sfL -D/dev/stderr https://${githubauth}api.github.com/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
 		cd "$targetdir"
 		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
 		exit 0
