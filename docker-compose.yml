@@ -2,16 +2,16 @@ version: '2'
 
 services:
 
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    ports:
-      - "81:80"
-    environment:
-      ENABLE_IPV6: "true"
-      DEFAULT_HOST: redmine
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./proxy.conf:/etc/nginx/proxy.conf:ro
+  #nginx-proxy:
+  #  image: jwilder/nginx-proxy
+  #  ports:
+  #    - "81:80"
+  #  environment:
+  #    ENABLE_IPV6: "true"
+  #    DEFAULT_HOST: redmine
+  #  volumes:
+  #    - /var/run/docker.sock:/tmp/docker.sock:ro
+  #    - ./proxy.conf:/etc/nginx/proxy.conf:ro
 
   redmine:
     image: redmine
