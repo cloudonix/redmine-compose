@@ -7,7 +7,7 @@ done
 
 sed -i 's,http://deb.debian.org/debian,http://cloudfront.debian.net/debian,' /etc/apt/sources.list
 while ! apt-get update; do sleep 5; done
-apt-get install -qy make gcc libcurl4-openssl-dev
+apt-get install -qy make gcc libcurl4-openssl-dev patch
 gem install bundler
 
 for dir in /usr/src/redmine/plugins/*; do
@@ -18,8 +18,6 @@ done
 # patch redmine 5 for zeitwerk shit
 # Redmine issue #36519, also: https://www.redmine.org/boards/2/topics/67113?r=67330
 if ! [ -f /var/lock/hacked-plugin-loader.lock ]; then
-	apt update
-	apt install patch
 	( cd /usr/src/redmine && patch -p1 < /hack-plugin-loader.patch)
 	touch /var/lock/hacked-plugin-loader.lock
 fi
@@ -33,6 +31,7 @@ chown redmine:redmine /home/redmine -R
 sleep 20 # wait for entrypoint to setup the database
 # run plugin migrations
 gosu redmine rake redmine:plugins RAILS_ENV=production
+gosu redmine rake redmine:plugins:migrate RAILS_ENV=production
 
 wait # wait for rails to finish
 
