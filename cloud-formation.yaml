@@ -3,10 +3,13 @@ Parameters:
   KeyName:
     Description: EC2 key pair name
     Type: String
+  Subnet:
+    Description: Existing VPC subnet to use for redmine
+    Type: String
   InstanceType:
     Description: EC2 instance type of the server
     Type: String
-    Default: t2.micro
+    Default: t3.micro
   SESUsername:
     Description: The SES SMTP user name to use for outgoing email
     Type: String
@@ -25,105 +28,8 @@ Conditions:
   EnableELB: !Equals [ !Ref UseLoadBalancer, yes ]
   DisableELB: !Not [ !Equals [ !Ref UseLoadBalancer, yes ] ]
 
-Mappings:
-  UbuntuAMIs:
-    ap-east-1:
-      bionic: ami-fbda9d8a
-      xenial: ami-5cdb9c2d
-    ap-northeast-1:
-      bionic: ami-0de29b9d8111fcc56
-      precise: ami-411b2d26
-      trusty: ami-0cf54a87bffe628d2
-      xenial: ami-003c6ed5c5176db19
-    ap-northeast-2:
-      bionic: ami-0707190796b7c9938
-      trusty: ami-06014a6d5047caf51
-      xenial: ami-0582405a4f3bf27c9
-    ap-northeast-3:
-      bionic: ami-0eada2a34397f6238
-      trusty: ami-061b5946c275cf79b
-      xenial: ami-077284ebb02f61464
-    ap-south-1:
-      bionic: ami-029401c523b31769e
-      trusty: ami-0460ce78b2cf43489
-      xenial: ami-011c09ac5e09ba22f
-    ap-southeast-1:
-      bionic: ami-0ca54d8a9af037f5b
-      precise: ami-0050ea63
-      trusty: ami-0aa787af8cdd260f1
-      xenial: ami-0b21b3ea2cb8660a5
-    ap-southeast-2:
-      bionic: ami-07309b5bf62e17d28
-      precise: ami-3e171c5d
-      trusty: ami-0caee806a0c3782c4
-      xenial: ami-09d19bae4dbb07062
-    ca-central-1:
-      bionic: ami-07e313d04bd4c79d3
-      trusty: ami-0975224f6cbaca625
-      xenial: ami-02da4c4d67205fcc8
-    cn-north-1:
-      bionic: ami-01993b4213b4bffb5
-      precise: ami-a23bedcf
-    cn-northwest-1:
-      bionic: ami-01d4e30d4d4952d0f
-    eu-central-1:
-      bionic: ami-062477f37cf33785e
-      precise: ami-9814cbf7
-      trusty: ami-0e18ae6e39f4962f0
-      xenial: ami-0257508f40836e6cf
-    eu-north-1:
-      bionic: ami-014ad3ed48f7d8f6f
-      precise: ami-88b33df6
-      trusty: ami-0ef973845f826405f
-      xenial: ami-0eb04b36ce3c3b0ac
-    eu-west-1:
-      bionic: ami-06b59122bc25ba6dc
-      precise: ami-d80f02be
-      trusty: ami-005af4c3162f495fa
-      xenial: ami-01793b684af7a3e2c
-    eu-west-2:
-      bionic: ami-0ce847e39053291c5
-      trusty: ami-02e42a8490e212d0a
-      xenial: ami-014ae7e330e2651dc
-    eu-west-3:
-      bionic: ami-0eb59b2883c466ff5
-      trusty: ami-03c04206a3f98c5cd
-      xenial: ami-0a3fd389b49c645bf
-    me-south-1:
-      bionic: ami-0e5ed216244648a3d
-      xenial: ami-00df020967accef43
-    sa-east-1:
-      bionic: ami-0b78e14c9f8bb9cf7
-      precise: ami-f7acc09b
-      trusty: ami-0b42a18b2c9c5ba83
-      xenial: ami-017555a9eb5076e5f
-    us-east-1:
-      bionic: ami-055df5de4f42cf331
-      precise: ami-a04529b6
-      trusty: ami-000b3a073fc20e415
-      xenial: ami-04ac550b78324f651
-    us-east-2:
-      bionic: ami-077cf8407f0b2025c
-      trusty: ami-032eae14ebea64f91
-      xenial: ami-0009e532719fe9bff
-    us-gov-east-1:
-      bionic: ami-39789548
-      precise: ami-d7a640a6
-      xenial: ami-b57b96c4
-    us-gov-west-1:
-      bionic: ami-c5604aa4
-      precise: ami-48008529
-      xenial: ami-50624831
-    us-west-1:
-      bionic: ami-040b9bc6e3b5d78e1
-      precise: ami-aeb99ece
-      trusty: ami-0430743863c514c80
-      xenial: ami-0798ac7e2b0fb9e75
-    us-west-2:
-      bionic: ami-0756ed94dd77be215
-      precise: ami-270f9747
-      trusty: ami-0bac6fc47ad07c5f5
-      xenial: ami-02e30ba14d8ffa6e6
+Include:
+  - ubuntu-images
 
 Resources:
   RedmineSecurityGroup:
@@ -137,23 +43,75 @@ Resources:
         - { CidrIp: 0.0.0.0/0, FromPort: 80, ToPort: 80, IpProtocol: tcp }
         - { CidrIp: 0.0.0.0/0, FromPort: 443, ToPort: 443, IpProtocol: tcp }
 
+  RedmineStorageSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "RedmineStorageSecurity-${AWS::StackName}"
+      GroupDescription: Give redmine access to EFS
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: -1
+          ToPort: -1
+          IpProtocol: icmp
+        - SourceSecurityGroupId:
+            Fn::GetAtt: RedmineSecurityGroup.GroupId
+          FromPort: 2049
+          ToPort: 2049
+          IpProtocol: tcp
+
+  RedmineLT:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        BlockDeviceMappings:
+          - DeviceName: "/dev/sda1"
+            Ebs:
+              VolumeType: gp3
+              DeleteOnTermination: true
+              VolumeSize: 15
+        ImageId: !FindInMap [ UbuntuRegionImages, { Ref: "AWS::Region" }, jammy ]
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref KeyName
+        NetworkInterfaces:
+          - DeviceIndex: 0
+            AssociatePublicIpAddress: true
+#            Ipv6AddressCount: 1
+            Groups:
+              - !GetAtt RedmineSecurityGroup.GroupId
+
   Redmine:
     Type: AWS::EC2::Instance
     Metadata:
       AWS::CloudFormation::Init:
         configSets:
-          Install: [ setup, install ]
+          Install: [ setup, systemfiles, deployfromefs, install ]
         setup:
-          commands:
-            aptup:
-              command: apt update
-        install:
           packages:
             apt:
               docker-compose: []
               docker.io: []
               postfix: []
+              nfs-common: []
+              rsync: []
+        systemfiles:
           files:
+            /etc/systemd/system/efs.mount:
+              content:
+                Fn::Sub: |
+                  [Unit]
+                  Description=Redmine EFS
+                  After=network.target network-online.target
+                  Wants=network-online.target
+                  [Mount]
+                  What=${Storage.FileSystemId}.efs.${AWS::Region}.amazonaws.com:/
+                  Where=/efs
+                  Type=nfs4
+                  Options=nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport
+                  [Install]
+                  WantedBy=multi-user.target
+              mode: "000644"
+              owner: root
+              group: root
             /etc/systemd/system/redmine.service:
               content: |
                 [Unit]
@@ -161,7 +119,7 @@ Resources:
                 [Service]
                 EnvironmentFile=-/etc/default/redmine-configuration
                 ExecStartPre=/bin/bash -c 'echo "SMTP_SERVER=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)" > /etc/default/redmine-configuration'
-                ExecStartPre=/bin/bash -c 'curl -L https://github.com/guss77/redmine-compose/archive/master.tar.gz | tar -C /usr/share -zx --xform=s,redmine-compose-master,docker-redmine,'
+                ExecStartPre=/bin/bash -c 'curl -L https://github.com/cloudonix/redmine-compose/archive/master.tar.gz | tar -C /usr/share -zx --xform=s,redmine-compose-master,docker-redmine,'
                 ExecStartPre=/bin/bash -c '/usr/bin/perl -pi -e "s/example.com/$(cat /etc/default/redmine-domain)/" /usr/share/docker-redmine/configuration.yml'
                 ExecStart=/usr/bin/docker-compose -p redmine -f /usr/share/docker-redmine/docker-compose.yml up
                 ExecReload=/usr/bin/docker-compose -p redmine -f /usr/share/docker-redmine/docker-compose.yml pull
@@ -180,16 +138,21 @@ Resources:
                 Fn::Sub: >
                   [email-smtp.${AWS::Region}.amazonaws.com]:25 ${SESUsername}:${SESPassword}
             /etc/default/redmine-domain:
-              content:
-                Ref: EmailDomain
+              content: !Ref EmailDomain
           commands:
-            reload:
+            refresh-system:
               command: /bin/systemctl daemon-reload
-            enable:
-              command: /bin/systemctl enable redmine.service
-            start:
-              command: /bin/systemctl start redmine.service
-            postfix:
+        deployfromefs:
+          commands:
+            1_mountefs:
+              command: /bin/systemctl enable --now efs.mount
+            2_deploy:
+              command: while ![ -d /efs/redmine ]; do sleep 5; done; rsync -a /efs/redmine/etc/ /etc/redmine/
+        install:
+          commands:
+            1_start-redmine:
+              command: /bin/systemctl enable --now redmine.service
+            2_postfix:
               command:
                 Fn::Sub: >
                   postconf -e "mynetworks=127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.0.0/12" \
@@ -201,27 +164,66 @@ Resources:
                             "smtp_tls_security_level=encrypt" \
                             "smtp_tls_note_starttls_offer=yes" \
                             "smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt"
-            postfix-ses-cred:
+            3_postfix-ses-cred:
               command: postmap hash:/etc/postfix/sasl_passwd
+            4_restart-postfix:
+              command: /bin/systemctl restart postfix.service
 
     Properties:
-      ImageId: !FindInMap [ UbuntuAMIs, { Ref: "AWS::Region" }, xenial ]
-      InstanceType: !Ref InstanceType
-      SecurityGroups:
-       - Ref: RedmineSecurityGroup
-      KeyName: !Ref KeyName
+      LaunchTemplate:
+        LaunchTemplateId: !Ref RedmineLT
+        Version: !GetAtt RedmineLT.LatestVersionNumber
+#      ImageId: !FindInMap [ UbuntuRegionImages, { Ref: "AWS::Region" }, jammy ]
+#      InstanceType: !Ref InstanceType
+#      SecurityGroupIds:
+#        - !GetAtt RedmineSecurityGroup.GroupId
+#      SubnetId: !Ref Subnet
+#      KeyName: !Ref KeyName
+      Tags:
+        - Key: Name
+        - Value: !Sub ${AWS::StackName}
       UserData:
         Fn::Base64:
           Fn::Join:
            - ""
            - - "#!/bin/bash -xe\n"
-             - "apt install -y python-setuptools\n"
-             - "easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n"
+             - "apt update && apt install -y python-setuptools\n"
+             - "python2 /usr/lib/python2.7/dist-packages/easy_install.py https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n"
              - "cfn-init -v --stack "
              - Ref: AWS::StackName
              - " --resource Redmine --configsets Install --region "
              - Ref: AWS::Region
              - "\n"
+
+  Storage:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      Encrypted: false
+      BackupPolicy:
+        Status: ENABLED
+      LifecyclePolicies:
+        - TransitionToIA: AFTER_7_DAYS
+      FileSystemTags:
+        - Key: Name
+          Value: redmine-stack-storage
+
+  StorageAccessPoint:
+    Type: AWS::EFS::AccessPoint
+    Properties:
+      FileSystemId: !Ref Storage
+      RootDirectory:
+        Path: "/"
+      AccessPointTags:
+        - Key: Name
+          Value: redis-stack-storage
+
+  StorageMountPoint:
+    Type: AWS::EFS::MountTarget
+    Properties: 
+      FileSystemId: !Ref Storage
+      SecurityGroups: 
+        - !GetAtt RedmineStorageSecurityGroup.GroupId
+      SubnetId: !Ref Subnet
 
   RedmineLoadBalancer:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
@@ -234,26 +236,26 @@ Resources:
         HealthyThreshold: 2
         UnhealthyThreshold: 2
       Instances:
-        - Ref: Redmine
+        - !Ref Redmine
       LoadBalancerName: redmine
       AvailabilityZones:
-        - Fn::GetAtt: [ Redmine, AvailabilityZone ]
+        - !GetAtt Redmine.AvailabilityZone
       Listeners:
         - { InstancePort: 80, InstanceProtocol: http, LoadBalancerPort: 80, Protocol: http }
       SecurityGroups:
-        - Fn::GetAtt: [ RedmineSecurityGroup, GroupId ]
+        - !GetAtt RedmineSecurityGroup.GroupId
 
 Outputs:
   ServerAddress:
     Description: The DNS address of the Redmine server
     Value:
-      Fn::GetAtt: [ Redmine, PublicDnsName]
+      Fn::GetAtt: Redmine.PublicDnsName
     Export:
       Name: !Sub "${AWS::StackName}-host"
   LoadBalancerAddress:
     Condition: EnableELB
     Description: The DNS address of the Redmine load balancer
     Value:
-      Fn::GetAtt: [ RedmineLoadBalancer, DNSName ]
+      Fn::GetAtt: RedmineLoadBalancer.DNSName
     Export:
       Name: !Sub "${AWS::StackName}-loadbalancer"

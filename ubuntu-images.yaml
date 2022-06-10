@@ -1,0 +1,284 @@
+Mappings:
+  UbuntuRegionImages:
+    af-south-1:
+      bionic: ami-0a02a65f9da9c8ebf
+      eoan: ami-02f7d59d4a50b9090
+      focal: ami-086ba5619d5ca0a2d
+      groovy: ami-04c304e2bc9c0df4d
+      hirsute: ami-09f3eabe14a0ab1db
+      impish: ami-0771d4ac26bc01933
+      jammy: ami-07260f92e2bf4a10a
+      trusty: ami-05281f33157559dfb
+      xenial: ami-063a9ea2ff5685f7f
+    ap-east-1:
+      bionic: ami-0a51cf4429fdc4ba9
+      disco: ami-542f6b25
+      eoan: ami-0cdf9f7d
+      focal: ami-06197a57d460aaaec
+      groovy: ami-04e15f1373ab6cc2d
+      hirsute: ami-013ee272bca72ad93
+      impish: ami-00fbfdb929ccf5d3b
+      jammy: ami-0b34399b6b8f6cbe4
+      trusty: ami-78215909
+      xenial: ami-038ff3475cbb62351
+    ap-northeast-1:
+      bionic: ami-0cc905e12087478be
+      disco: ami-0faa79bbf2de7e38f
+      eoan: ami-0f2e2ff01b25f5910
+      focal: ami-079c663c50413a220
+      groovy: ami-0c9a49c78ddff1e05
+      hirsute: ami-0b9d15b8e5f4dafb4
+      impish: ami-007c5ab76ae05859c
+      jammy: ami-0bf18e1e9e3c51f1c
+      precise: ami-411b2d26
+      trusty: ami-0cf54a87bffe628d2
+      xenial: ami-0822295a729d2a28e
+    ap-northeast-2:
+      bionic: ami-092dfb48456a3b119
+      disco: ami-04b0cc99f7092584b
+      eoan: ami-064b73250c72c5d81
+      focal: ami-048299d2b7b438e05
+      groovy: ami-05ba0b0744aaac461
+      hirsute: ami-0cecae6ba4713747a
+      impish: ami-0c86dc4e3508189f8
+      jammy: ami-0b83188ea5368ce8c
+      trusty: ami-06014a6d5047caf51
+      xenial: ami-0dd97ebb907cf9366
+    ap-northeast-3:
+      bionic: ami-05755d16541237ee8
+      disco: ami-0c51e73c44d581a70
+      eoan: ami-04a2ec90431fb9a30
+      focal: ami-0031d931a171fea9a
+      groovy: ami-0eea0548411b0f182
+      hirsute: ami-0e6e0d9a8fd8dea81
+      impish: ami-0e0bd0dd4dc208965
+      jammy: ami-0d5916e140aa53dbf
+      trusty: ami-061b5946c275cf79b
+      xenial: ami-00f5d213b513f1b07
+    ap-south-1:
+      bionic: ami-044f5dc1b02484099
+      disco: ami-0f84f75fbc8e5da10
+      eoan: ami-02afca7d904a7c938
+      focal: ami-0afe0ab87c09ab68a
+      groovy: ami-036173ddd5e6c0c8c
+      hirsute: ami-0a69be034af062434
+      impish: ami-0ac88d5a0184aa156
+      jammy: ami-03b7965a117bed272
+      trusty: ami-0460ce78b2cf43489
+      xenial: ami-0f2e255ec956ade7f
+    ap-southeast-1:
+      bionic: ami-099b6b870155cb58f
+      disco: ami-077b84298024bbfa8
+      eoan: ami-00e57e72d4414f07b
+      focal: ami-0d3b2e26119a851ac
+      groovy: ami-026310a5e3efeabe3
+      hirsute: ami-05ad86c07f8a47378
+      impish: ami-0571dcecd7521c3e4
+      jammy: ami-0f6be7ef6d3caae68
+      precise: ami-0050ea63
+      trusty: ami-0aa787af8cdd260f1
+      xenial: ami-0f74c08b8b5effa56
+    ap-southeast-2:
+      bionic: ami-0cfaff66cce8cce97
+      disco: ami-08bd5c888ac024dd7
+      eoan: ami-0c9590266ddb0780e
+      focal: ami-0ab20ab938102813f
+      groovy: ami-0582d6348e0b0e39e
+      hirsute: ami-0c2013987ff3feed8
+      impish: ami-0622b8bc46b50e0b8
+      jammy: ami-05eb58ba2778415d2
+      precise: ami-3e171c5d
+      trusty: ami-0caee806a0c3782c4
+      xenial: ami-0672b175139a0f8f4
+    ap-southeast-3:
+      bionic: ami-0388fa78904a1d5f5
+      focal: ami-066158dab514dfe62
+      hirsute: ami-04fdf7291c88265d3
+      impish: ami-0c063af24311c0c7c
+      jammy: ami-0d0a9eb54816ce779
+      trusty: ami-080ddd088810cac0a
+      xenial: ami-0e1af156739c38b84
+    ca-central-1:
+      bionic: ami-0103997c1ab338812
+      disco: ami-06a0ea768526e5631
+      eoan: ami-01d49bbcda167f11d
+      focal: ami-0a8f1768d392eee9b
+      groovy: ami-0ae7c2d1e4bd60ec5
+      hirsute: ami-0b43e559496caf8b5
+      impish: ami-00dcd51dbbc0e87f6
+      jammy: ami-072a2482f5b21ea61
+      trusty: ami-0975224f6cbaca625
+      xenial: ami-03bcd79f25ca6b127
+    cn-north-1:
+      bionic: ami-0764541358866f84e
+      disco: ami-0c8aa8e8968c49e47
+      focal: ami-0741e7b8b4fb0001c
+      groovy: ami-04258250969340bc4
+      hirsute: ami-0e4526fd9c19bed04
+      precise: ami-a23bedcf
+      xenial: ami-03bd5b54f08201029
+    cn-northwest-1:
+      bionic: ami-02441dea73a15a612
+      disco: ami-0b2d0fb3e0c33bc6b
+      focal: ami-0883e8062ff31f727
+      groovy: ami-0659d6a42b4baffc8
+      hirsute: ami-017a6d3f462daf7a4
+      xenial: ami-01924473944c652d8
+    eu-central-1:
+      bionic: ami-035e017c94c3cbe9c
+      disco: ami-066866b740d9ce5a7
+      eoan: ami-0279a50572ef10ca3
+      focal: ami-0ce4b8a18a8605eff
+      groovy: ami-0612e041366af94b2
+      hirsute: ami-01ec9ccdf0676a480
+      impish: ami-0dbfcf63c79a3c237
+      jammy: ami-05db0e60504db9e1b
+      precise: ami-9814cbf7
+      trusty: ami-0e18ae6e39f4962f0
+      xenial: ami-09042b2f6d07d164a
+    eu-north-1:
+      bionic: ami-0fd5e00375c60c07d
+      disco: ami-09092712a37de700f
+      eoan: ami-0ccaf3c894ab55325
+      focal: ami-0bc337ab82f7c00b4
+      groovy: ami-0233a47ff98c8f066
+      hirsute: ami-051c004659254c175
+      impish: ami-03c8cb7aded14a65e
+      jammy: ami-044e206f668664092
+      precise: ami-88b33df6
+      trusty: ami-0ef973845f826405f
+      xenial: ami-000e50175c5f86214
+    eu-south-1:
+      bionic: ami-0863dca0f06f0a738
+      eoan: ami-00609f51462d31126
+      focal: ami-0012ad81fe6f58285
+      groovy: ami-03ddfad34cc07985a
+      hirsute: ami-0e6353c2a5f6ee1ec
+      impish: ami-08568e511e86d2881
+      jammy: ami-07e67c061ef6a3779
+      trusty: ami-0a73c490a4366be18
+      xenial: ami-027f7881d2f6725e1
+    eu-west-1:
+      bionic: ami-0ce48dd7b483b8402
+      disco: ami-04648f25984a4cb3d
+      eoan: ami-0c7ab416169874b8c
+      focal: ami-0f2146ee4fa7ba1d1
+      groovy: ami-059236d06b055b2cf
+      hirsute: ami-0844df7d3ff9efff5
+      impish: ami-01fa0b21ce6b4dd4e
+      jammy: ami-0d6c3eb978a4ef8a0
+      precise: ami-d80f02be
+      trusty: ami-005af4c3162f495fa
+      xenial: ami-0f29c8402f8cce65c
+    eu-west-2:
+      bionic: ami-06cc1e8bd6513949d
+      disco: ami-08060640df22e3242
+      eoan: ami-04c841971dd561725
+      focal: ami-0493e28e0af3e55b5
+      groovy: ami-07cf622713ac7fbbb
+      hirsute: ami-07100047e41837f0e
+      impish: ami-0fb5cdac656f91adf
+      jammy: ami-0bde1ad52d89b8d1a
+      trusty: ami-02e42a8490e212d0a
+      xenial: ami-09a2a0f7d2db8baca
+    eu-west-3:
+      bionic: ami-08e7f6b6288b79060
+      disco: ami-0af99c435917a4a7a
+      eoan: ami-09ac464f7d5bfa2e6
+      focal: ami-04b985fe4df4c1ccb
+      groovy: ami-0a6f648c417f5e198
+      hirsute: ami-09e738a2945e7f991
+      impish: ami-0d984c8c52f6208cb
+      jammy: ami-0ff5d728e04b28744
+      trusty: ami-03c04206a3f98c5cd
+      xenial: ami-052f10f1c45aa2155
+    me-south-1:
+      bionic: ami-0a1de94fd1cba03e3
+      disco: ami-01a6da11d5d78e0c2
+      eoan: ami-0f68b33536cb2bed2
+      focal: ami-00c212766accdc8b2
+      groovy: ami-0150cb97cf71da080
+      hirsute: ami-0259e00e0eb56e3f8
+      impish: ami-02e37f354e0fa3071
+      jammy: ami-0402240419adac512
+      trusty: ami-044d22e1e36dc42cb
+      xenial: ami-0c41538a47f4b7d47
+    sa-east-1:
+      bionic: ami-0e0f7235a5104d305
+      disco: ami-0cf31b6ee5b64a726
+      eoan: ami-05759028284eec35e
+      focal: ami-0a7339745736ef59b
+      groovy: ami-0b24e0ce4bbae68e7
+      hirsute: ami-04e3b504692ea501a
+      impish: ami-07da7ca71b5897e4a
+      jammy: ami-061694d1c1058c12f
+      precise: ami-f7acc09b
+      trusty: ami-0b42a18b2c9c5ba83
+      xenial: ami-0a729bdc1acf7528b
+    us-east-1:
+      bionic: ami-0d73480446600f555
+      disco: ami-0ff7189cf12ed8eb6
+      eoan: ami-05eca04bf60ba5026
+      focal: ami-09cce346b3952cce3
+      groovy: ami-01c9c1d6ccb3a4a11
+      hirsute: ami-0fcda042dd8ae41c7
+      impish: ami-06dd21c0394ac28a4
+      jammy: ami-07267eded9a267f32
+      precise: ami-a04529b6
+      trusty: ami-000b3a073fc20e415
+      xenial: ami-0b0ea68c435eb488d
+    us-east-2:
+      bionic: ami-0b9ecb12083282d75
+      disco: ami-039a23204cb2a1879
+      eoan: ami-04ecb1cddf0db6c76
+      focal: ami-02551addc1e50c0a4
+      groovy: ami-028f0daffc74d96ee
+      hirsute: ami-08baadf038260768e
+      impish: ami-002f03f04718e8ae8
+      jammy: ami-0af8fbf4410fe5315
+      trusty: ami-032eae14ebea64f91
+      xenial: ami-05803413c51f242b7
+    us-gov-east-1:
+      bionic: ami-04a5479ac72b88461
+      disco: ami-21709250
+      eoan: ami-286e8159
+      focal: ami-0eb7ef4cc0594fa04
+      groovy: ami-09b44e9fc5a0affc8
+      hirsute: ami-05934c788236de9a6
+      jammy: ami-08fcbec75b43330b7
+      precise: ami-d7a640a6
+      xenial: ami-077062c5cfb91a89e
+    us-gov-west-1:
+      bionic: ami-0e232c5a2098f504e
+      disco: ami-50fdde31
+      eoan: ami-6e2f100f
+      focal: ami-029a634618d6c0300
+      groovy: ami-0d0d6b742e9d4857e
+      hirsute: ami-02533ea3ee3dac17a
+      jammy: ami-04e77113f128920b2
+      precise: ami-48008529
+      xenial: ami-029c925c0f16a0956
+    us-west-1:
+      bionic: ami-0519cce8bb5c1229c
+      disco: ami-0801f2dbf0b6f98c9
+      eoan: ami-05fd1609e0ac2ec6b
+      focal: ami-008c4a1500b5ebb25
+      groovy: ami-06bd02fc6ce313d91
+      hirsute: ami-0ab4b92d5eed25815
+      impish: ami-06ee270124aa3479b
+      jammy: ami-020825fe0d785c25c
+      precise: ami-aeb99ece
+      trusty: ami-0430743863c514c80
+      xenial: ami-0454207e5367abf01
+    us-west-2:
+      bionic: ami-07e60b7f43b05d68e
+      disco: ami-0e2e3e63c545211e2
+      eoan: ami-0d3d788094d3f0aa9
+      focal: ami-078c065e38be7296e
+      groovy: ami-08a36276cbbd093da
+      hirsute: ami-0c4aac39c51578be6
+      impish: ami-05a3a7a1db166e133
+      jammy: ami-09b85fb597c7d4589
+      precise: ami-270f9747
+      trusty: ami-0bac6fc47ad07c5f5
+      xenial: ami-0688ba7eeeeefe3cd
