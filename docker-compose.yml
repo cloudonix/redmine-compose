@@ -38,7 +38,7 @@ services:
     mem_limit: 800mb
 
   database:
-    image: mariadb:10.5.6
+    image: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: redmine
