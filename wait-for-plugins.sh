@@ -26,12 +26,9 @@ chown redmine:redmine /home/redmine -R
 
 (cd /usr/src/redmine; bundle install)
 
-/docker-entrypoint.sh "$@" &
-
-sleep 20 # wait for entrypoint to setup the database
 # run plugin migrations
-gosu redmine rake redmine:plugins RAILS_ENV=production
-gosu redmine rake redmine:plugins:migrate RAILS_ENV=production
+/docker-entrypoint.sh rake redmine:plugins RAILS_ENV=production
+/docker-entrypoint.sh rake redmine:plugins:migrate RAILS_ENV=production
 
-wait # wait for rails to finish
-
+# start rails
+/docker-entrypoint.sh "$@"
