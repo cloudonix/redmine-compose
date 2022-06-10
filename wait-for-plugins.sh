@@ -17,10 +17,10 @@ done
 
 # patch redmine 5 for zeitwerk shit
 # Redmine issue #36519, also: https://www.redmine.org/boards/2/topics/67113?r=67330
-if ! [ -f /var/lock/hacked-plugin-loader.lock ]; then
-	( cd /usr/src/redmine && patch -p1 < /hack-plugin-loader.patch)
-	touch /var/lock/hacked-plugin-loader.lock
-fi
+#if ! [ -f /var/lock/hacked-plugin-loader.lock ]; then
+#	( cd /usr/src/redmine && patch -p1 < /hack-plugin-loader.patch)
+#	touch /var/lock/hacked-plugin-loader.lock
+#fi
 
 chown redmine:redmine /home/redmine -R
 
