@@ -20,13 +20,19 @@ Parameters:
     Description: The domain name from which redmine will send email
     Type: String
   UseLoadBalancer:
-    Description: Whether to use a load balancer or deploy an internal reverse proxy. This is mostly related to SSL configuration.
+    Description: Whether to use a load balancer or deploy an internal reverse proxy. This is mostly related to HTTPS configuration.
     Type: String
     Default: yes
+  CertificateId:
+    Description: Existing HTTPS certifiate to use for the load balance
+    Type: String
+    Default: ''
 
 Conditions: 
   EnableELB: !Equals [ !Ref UseLoadBalancer, yes ]
-  DisableELB: !Not [ !Equals [ !Ref UseLoadBalancer, yes ] ]
+  DisableELB: !Not [ { Condition: EnableELB } ]
+  UseUnsecureELB: !And [ { Condition: EnableELB }, !Equals [ !Ref CertificateId, "" ] ]
+  UseSecureELB: !And [ { Condition: EnableELB }, !Not [ !Equals [ !Ref CertificateId, "" ] ] ]
 
 Include:
   - ubuntu-images
@@ -78,6 +84,19 @@ Resources:
 #            Ipv6AddressCount: 1
             Groups:
               - !GetAtt RedmineSecurityGroup.GroupId
+        UserData:
+          Fn::Base64:
+            Fn::Join:
+            - ""
+            - - "#!/bin/bash -xe\n"
+              - "apt update && apt install -y python-setuptools\n"
+              - "python2 /usr/lib/python2.7/dist-packages/easy_install.py https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n"
+              - "cfn-init -v --stack "
+              - Ref: AWS::StackName
+              - " --resource Redmine --configsets Install --region "
+              - Ref: AWS::Region
+              - "\n"
+              - "echo 11 > /etc/instance-count\n"
 
   Redmine:
     Type: AWS::EC2::Instance
@@ -168,32 +187,13 @@ Resources:
               command: postmap hash:/etc/postfix/sasl_passwd
             4_restart-postfix:
               command: /bin/systemctl restart postfix.service
-
     Properties:
       LaunchTemplate:
         LaunchTemplateId: !Ref RedmineLT
         Version: !GetAtt RedmineLT.LatestVersionNumber
-#      ImageId: !FindInMap [ UbuntuRegionImages, { Ref: "AWS::Region" }, jammy ]
-#      InstanceType: !Ref InstanceType
-#      SecurityGroupIds:
-#        - !GetAtt RedmineSecurityGroup.GroupId
-#      SubnetId: !Ref Subnet
-#      KeyName: !Ref KeyName
       Tags:
         - Key: Name
-        - Value: !Sub ${AWS::StackName}
-      UserData:
-        Fn::Base64:
-          Fn::Join:
-           - ""
-           - - "#!/bin/bash -xe\n"
-             - "apt update && apt install -y python-setuptools\n"
-             - "python2 /usr/lib/python2.7/dist-packages/easy_install.py https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n"
-             - "cfn-init -v --stack "
-             - Ref: AWS::StackName
-             - " --resource Redmine --configsets Install --region "
-             - Ref: AWS::Region
-             - "\n"
+          Value: !Sub ${AWS::StackName}
 
   Storage:
     Type: AWS::EFS::FileSystem
@@ -227,7 +227,7 @@ Resources:
 
   RedmineLoadBalancer:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
-    Condition: EnableELB
+    Condition: UseUnsecureELB
     Properties:
       HealthCheck:
         Interval: 30
@@ -237,11 +237,57 @@ Resources:
         UnhealthyThreshold: 2
       Instances:
         - !Ref Redmine
-      LoadBalancerName: redmine
+      LoadBalancerName: !Sub ${AWS::StackName}-lb
       AvailabilityZones:
         - !GetAtt Redmine.AvailabilityZone
       Listeners:
         - { InstancePort: 80, InstanceProtocol: http, LoadBalancerPort: 80, Protocol: http }
+        - InstancePort: 80
+          InstanceProtocol: http
+          LoadBalancerPort: 443
+          Protocol: https
+          PolicyNames: 
+            - My-TLSNegotiation-Policy
+          SSLCertificateId: !Sub "arn:aws:acm:${AWS::Region}:756645658314:certificate/${CertificateId}"
+      Policies:
+        - PolicyName: My-TLSNegotiation-Policy
+          PolicyType: SSLNegotiationPolicyType
+          Attributes:
+            - Name: Reference-Security-Policy
+              Value: ELBSecurityPolicy-TLS-1-2-2017-01
+      SecurityGroups:
+        - !GetAtt RedmineSecurityGroup.GroupId
+
+  RedmineLoadBalancerTLS:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Condition: UseSecureELB
+    Properties:
+      HealthCheck:
+        Interval: 30
+        Timeout: 5
+        Target: HTTP:80/login
+        HealthyThreshold: 2
+        UnhealthyThreshold: 2
+      Instances:
+        - !Ref Redmine
+      LoadBalancerName: !Sub ${AWS::StackName}-securelb
+      AvailabilityZones:
+        - !GetAtt Redmine.AvailabilityZone
+      Listeners:
+        - { InstancePort: 80, InstanceProtocol: http, LoadBalancerPort: 80, Protocol: http }
+        - InstancePort: 80
+          InstanceProtocol: http
+          LoadBalancerPort: 443
+          Protocol: https
+          PolicyNames: 
+            - My-TLSNegotiation-Policy
+          SSLCertificateId: !Sub "arn:aws:acm:${AWS::Region}:756645658314:certificate/${CertificateId}"
+      Policies:
+        - PolicyName: My-TLSNegotiation-Policy
+          PolicyType: SSLNegotiationPolicyType
+          Attributes:
+            - Name: Reference-Security-Policy
+              Value: ELBSecurityPolicy-TLS-1-2-2017-01
       SecurityGroups:
         - !GetAtt RedmineSecurityGroup.GroupId
 
@@ -253,9 +299,16 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-host"
   LoadBalancerAddress:
-    Condition: EnableELB
+    Condition: UseUnsecureELB
     Description: The DNS address of the Redmine load balancer
     Value:
       Fn::GetAtt: RedmineLoadBalancer.DNSName
+    Export:
+      Name: !Sub "${AWS::StackName}-loadbalancer"
+  LoadBalancerSecureAddress:
+    Condition: UseSecureELB
+    Description: The DNS address of the Redmine load balancer
+    Value:
+      Fn::GetAtt: RedmineLoadBalancerTLS.DNSName
     Export:
       Name: !Sub "${AWS::StackName}-loadbalancer"
