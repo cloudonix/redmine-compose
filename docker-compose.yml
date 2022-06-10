@@ -27,6 +27,7 @@ services:
       - ./wait-for-plugins.sh:/wait-for-plugins:ro
       - ./configuration.yml:/usr/src/redmine/config/configuration.yml
       - /var/log/redmine/:/usr/src/redmine/log/
+      - ./hack-plugin-loader.patch:/hack-plugin-loader.patch
     extra_hosts:
       - "smtpserver:${SMTP_SERVER}"
     entrypoint: /wait-for-plugins

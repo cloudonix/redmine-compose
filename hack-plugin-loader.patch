@@ -1,0 +1,12 @@
+diff --git a/lib/redmine/plugin_loader.rb b/lib/redmine/plugin_loader.rb
+index ea6c4a8b2..9fff083f5 100644
+--- a/lib/redmine/plugin_loader.rb
++++ b/lib/redmine/plugin_loader.rb
+@@ -125,6 +125,7 @@ module Redmine
+       directories.each do |directory|
+         # Add the plugin directories to rails autoload paths
+         engine_cfg = Rails::Engine::Configuration.new(directory.to_s)
++        $:.unshift "#{engine_cfg.paths.path}/lib"
+         engine_cfg.paths.add 'lib', eager_load: true
+         engine_cfg.eager_load_paths.each do |dir|
+           Rails.autoloaders.main.push_dir dir

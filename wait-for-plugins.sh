@@ -15,6 +15,15 @@ for dir in /usr/src/redmine/plugins/*; do
         (cd "$dir"; bundle install)
 done
 
+# patch redmine 5 for zeitwerk shit
+# Redmine issue #36519, also: https://www.redmine.org/boards/2/topics/67113?r=67330
+if ! [ -f /var/lock/hacked-plugin-loader.lock ]; then
+	apt update
+	apt install patch
+	( cd /usr/src/redmine && patch -p1 < /hack-plugin-loader.patch)
+	touch /var/lock/hacked-plugin-loader.lock
+fi
+
 chown redmine:redmine /home/redmine -R
 
 (cd /usr/src/redmine; bundle install)
