@@ -155,6 +155,7 @@ Resources:
             /etc/postfix/sasl_passwd:
               content:
                 Fn::Sub: >
+                  [email-smtp.us-east-1.amazonaws.com]:25 ${SESUsername}:${SESPassword}
                   [email-smtp.${AWS::Region}.amazonaws.com]:25 ${SESUsername}:${SESPassword}
             /etc/default/redmine-domain:
               content: !Ref EmailDomain
@@ -175,7 +176,7 @@ Resources:
               command:
                 Fn::Sub: >
                   postconf -e "mynetworks=127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.0.0/12" \
-                            "relayhost=[email-smtp.${AWS::Region}.amazonaws.com]:25" \
+                            "relayhost=[email-smtp.us-east-1.amazonaws.com]:25" \
                             "smtp_sasl_auth_enable=yes" \
                             "smtp_sasl_security_options=noanonymous" \
                             "smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd" \
