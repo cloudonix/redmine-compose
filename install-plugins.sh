@@ -21,7 +21,6 @@ function install_from_github() {
 		set -eo pipefail
 		curl -sfL -D/dev/stderr $GITHUBAPI/repos/"$repo"/tarball${branch} | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
 		cd "$targetdir"
-		bundle config disable_platform_warnings true
 		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
 		exit 0
 	)
@@ -29,6 +28,7 @@ function install_from_github() {
 
 rm -f /redmine/files/plugins-are-ready
 cd /redmine/plugins
+bundle config --global disable_platform_warnings true
 
 install_from_github skokhanovskiy/redmine_omniauth_google yes
 
@@ -47,7 +47,6 @@ install_from_github two-pack/redmine_auto_assign_group
 	cd view_customize
 	bundle config set without 'development test'
 	(echo "source 'https://rubygems.org'"; cat Gemfile) > Gemfile.new; mv Gemfile.new Gemfile
-	bundle config disable_platform_warnings true
 	bundle install
 )
 
