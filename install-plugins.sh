@@ -21,6 +21,7 @@ function install_from_github() {
 		set -eo pipefail
 		curl -sfL -D/dev/stderr $GITHUBAPI/repos/"$repo"/tarball${branch} | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
 		cd "$targetdir"
+		bundle config disable_platform_warnings true
 		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
 		exit 0
 	)
@@ -42,11 +43,12 @@ install_from_github two-pack/redmine_auto_assign_group
 install_from_github speedy32129/time_logger
 
 (
-  curl -sfL $GITHUBAPI/repos/onozaty/redmine-view-customize/tarball | tar -zx --xform="s,onozaty-redmine-view-customize-[[:alnum:]]*,view_customize,"
-  cd view_customize
-  bundle config set without 'development test'
-  (echo "source 'https://rubygems.org'"; cat Gemfile) > Gemfile.new; mv Gemfile.new Gemfile
-  bundle install
+	curl -sfL $GITHUBAPI/repos/onozaty/redmine-view-customize/tarball | tar -zx --xform="s,onozaty-redmine-view-customize-[[:alnum:]]*,view_customize,"
+	cd view_customize
+	bundle config set without 'development test'
+	(echo "source 'https://rubygems.org'"; cat Gemfile) > Gemfile.new; mv Gemfile.new Gemfile
+	bundle config disable_platform_warnings true
+	bundle install
 )
 
 [ -f /etc/redmine-compose/plugins ] && . /etc/redmine-compose/plugins
