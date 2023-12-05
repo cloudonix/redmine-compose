@@ -10,11 +10,16 @@ fi
 function install_from_github() {
 	local repo="$1" bundler="$2" targetdir="$3" githubauth
 	read username reponame <<<"${repo/\// }"
+ 	local branch=
 	targetdir="${targetdir:-$reponame}"
+ 	if [ "${repo##*:}" != "${repo}" ]; then
+  		branch="/${repo##*:}"
+    		repo="${repo%%:*}"
+  	fi
 	[ -d "$targetdir" ] && rm -rf $targetdir
 	(
 		set -eo pipefail
-		curl -sfL -D/dev/stderr $GITHUBAPI/repos/"$repo"/tarball | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
+		curl -sfL -D/dev/stderr $GITHUBAPI/repos/"$repo"/tarball${branch} | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
 		cd "$targetdir"
 		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
 		exit 0
