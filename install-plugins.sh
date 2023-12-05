@@ -9,13 +9,13 @@ fi
 
 function install_from_github() {
 	local repo="$1" bundler="$2" targetdir="$3" githubauth
-	read username reponame <<<"${repo/\// }"
  	local branch=
-	targetdir="${targetdir:-$reponame}"
  	if [ "${repo##*:}" != "${repo}" ]; then
   		branch="/${repo##*:}"
-    		repo="${repo%%:*}"
+    	repo="${repo%%:*}"
   	fi
+	read username reponame <<<"${repo/\// }"
+	targetdir="${targetdir:-$reponame}"
 	[ -d "$targetdir" ] && rm -rf $targetdir
 	(
 		set -eo pipefail
