@@ -40,7 +40,7 @@ install_from_github woblavobla/redmine_changeauthor
 
 install_from_github two-pack/redmine_auto_assign_group
 
-install_from_github speedy32129/time_logger
+#install_from_github speedy32129/time_logger
 
 (
 	curl -sfL $GITHUBAPI/repos/onozaty/redmine-view-customize/tarball | tar -zx --xform="s,onozaty-redmine-view-customize-[[:alnum:]]*,view_customize,"
