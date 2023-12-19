@@ -8,7 +8,8 @@ done
 sed -i 's,http://deb.debian.org/debian,http://cloudfront.debian.net/debian,' /etc/apt/sources.list
 while ! apt-get update; do sleep 5; done
 apt-get install -qy make gcc libcurl4-openssl-dev patch
-gem install bundler
+#gem install bundler
+gem install bundler -v 2.4.22
 
 for dir in /usr/src/redmine/plugins/*; do
         [ -d "$dir" ] || continue
