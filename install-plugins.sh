@@ -21,7 +21,7 @@ function install_from_github() {
 		set -eo pipefail
 		curl -sfL -D/dev/stderr $GITHUBAPI/repos/"$repo"/tarball${branch} | tar -zx --xform="s,$username-$reponame-[[:alnum:]]*,$targetdir,"
 		cd "$targetdir"
-		sed -i "s/gem 'json'/gem 'json', '< 2.8.0'/" Gemfile # lock json gem to a version that works with redmine 4
+		sed -i "s/gem 'json'/gem 'json', '< 2.8.0'/" Gemfile || true # lock json gem to a version that works with redmine 4
 		[ -n "$bundler" ] && rm -f Gemfile.lock && bundle
 		exit 0
 	)
