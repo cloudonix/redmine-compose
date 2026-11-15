@@ -25,7 +25,7 @@ done
 
 chown redmine:redmine /home/redmine -R
 
-(cd /usr/src/redmine; bundle install)
+(cd /usr/src/redmine; gosu redmine bundle install)
 
 # run plugin migrations
 /docker-entrypoint.sh rake redmine:plugins RAILS_ENV=production
